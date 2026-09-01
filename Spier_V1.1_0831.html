@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>南码头文化中心 · 小程序交互原型 V2</title>
+<style>
+:root{
+  --blue:#1677ff;
+  --blue2:#3c8cff;
+  --blue-weak:#eef6ff;
+  --cyan:#13b8c8;
+  --green:#22c55e;
+  --green-weak:#eafaf0;
+  --red:#ef4444;
+  --red-weak:#fff0f0;
+  --orange:#ff9f2e;
+  --purple:#7267ef;
+  --text:#172033;
+  --muted:#758097;
+  --line:#e7edf6;
+  --bg:#f5f8fc;
+  --card:#fff;
+  --shadow:0 10px 28px rgba(33,72,128,.08);
+  --radius:20px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#dfe7f2;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  color:var(--text);
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.phone{
+  width:min(100%, 430px);
+  margin:0 auto;
+  min-height:100vh;
+  background:var(--bg);
+  position:relative;
+  overflow-x:hidden;
+  box-shadow:0 0 40px rgba(26,51,91,.18);
+}
+.page{
+  display:none;
+  min-height:100vh;
+  padding-bottom:86px;
+  background:
+    radial-gradient(circle at 20% -10%,rgba(33,123,255,.12),transparent 30%),
+    var(--bg);
+}
+.page.active{display:block}
+.topbar{
+  height:64px;
+  background:rgba(255,255,255,.96);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 16px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  border-bottom:1px solid rgba(231,237,246,.8);
+  backdrop-filter:blur(16px);
+}
+.topbar .title{font-size:20px;font-weight:750}
+.top-actions{position:absolute;right:14px;display:flex;gap:8px;align-items:center}
+.back{
+  position:absolute;left:14px;border:0;background:transparent;font-size:30px;line-height:1;color:#111;
+  width:38px;height:38px;border-radius:12px;
+}
+.iconbtn{
+  border:1px solid var(--line);background:#fff;border-radius:14px;min-width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;color:var(--text);
+}
+.scan-mini{
+  width:40px;height:40px;position:relative;border:1px solid var(--line);border-radius:14px;background:#fff;
+}
+.scan-mini:before,.scan-mini:after,.scan-glyph:before,.scan-glyph:after{
+  content:"";position:absolute;width:9px;height:9px;border-color:currentColor;color:var(--blue)
+}
+.scan-mini:before{left:9px;top:9px;border-left:2px solid;border-top:2px solid}
+.scan-mini:after{right:9px;top:9px;border-right:2px solid;border-top:2px solid}
+.scan-mini .b1{position:absolute;left:9px;bottom:9px;width:9px;height:9px;border-left:2px solid var(--blue);border-bottom:2px solid var(--blue)}
+.scan-mini .b2{position:absolute;right:9px;bottom:9px;width:9px;height:9px;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue)}
+.content{padding:14px 16px 24px}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+}
+.hero{
+  padding:26px 22px;
+  min-height:190px;
+  color:#fff;
+  overflow:hidden;
+  position:relative;
+  background:linear-gradient(125deg,#0d6efd 0%,#2785ff 52%,#7bbdff 100%);
+}
+.hero:after{
+  content:"";position:absolute;width:210px;height:210px;border-radius:40%;
+  background:rgba(255,255,255,.16);right:-35px;bottom:-75px;transform:rotate(18deg)
+}
+.hero:before{
+  content:"文化中心";position:absolute;right:18px;bottom:20px;color:rgba(255,255,255,.24);
+  font-size:52px;font-weight:900;letter-spacing:2px;
+}
+.hero h1{margin:0 0 10px;font-size:32px;line-height:1.2;position:relative;z-index:2}
+.hero p{margin:0;font-size:16px;position:relative;z-index:2}
+.notice{
+  margin-top:12px;padding:14px 16px;display:flex;gap:10px;align-items:center;font-size:14px
+}
+.notice .speaker{color:var(--blue);font-size:18px}
+.notice .arrow{margin-left:auto;color:#98a2b3}
+.quick-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;padding:16px 8px
+}
+.quick-item{border:0;background:transparent;text-align:center;padding:0}
+.qicon{
+  margin:0 auto 8px;width:48px;height:48px;border-radius:15px;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:22px;
+}
+.qicon.blue{background:linear-gradient(135deg,#2580ff,#0d66ea)}
+.qicon.cyan{background:linear-gradient(135deg,#22c7d4,#0aa1b2)}
+.qicon.orange{background:linear-gradient(135deg,#ffb13d,#ff8a19)}
+.qicon.purple{background:linear-gradient(135deg,#8478ff,#6557e8)}
+.quick-item b{display:block;font-size:13px}
+.quick-item small{font-size:10.5px;color:var(--muted)}
+.section{margin-top:14px}
+.sec-head{display:flex;align-items:center;gap:8px;margin:0 2px 10px}
+.sec-head:before{content:"";width:4px;height:20px;border-radius:4px;background:var(--blue)}
+.sec-head h3{margin:0;font-size:18px}
+.sec-head .more{margin-left:auto;color:var(--muted);font-size:13px}
+.list-card{padding:10px 12px}
+.row-card{
+  display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)
+}
+.row-card:last-child{border-bottom:0}
+.thumb{
+  width:100px;height:70px;border-radius:14px;flex:0 0 auto;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;text-align:center;padding:10px
+}
+.thumb.movie{background:linear-gradient(160deg,#071d3a,#0f4779 55%,#f5a74b)}
+.thumb.room{background:linear-gradient(145deg,#cbd8e7,#f8fbff);color:#50647d}
+.thumb.craft{background:linear-gradient(145deg,#f8ecd8,#c99d68);color:#6f4b2d}
+.row-main{min-width:0;flex:1}
+.row-main b{display:block;font-size:15px;line-height:1.35}
+.meta{font-size:12px;color:var(--muted);margin-top:5px}
+.primary, .secondary, .danger, .greenbtn{
+  border:0;border-radius:12px;padding:10px 14px;font-weight:700
+}
+.primary{background:var(--blue);color:#fff}
+.secondary{background:var(--blue-weak);color:var(--blue)}
+.greenbtn{background:var(--green);color:#fff}
+.danger{background:var(--red-weak);color:var(--red)}
+.open-row{display:flex;align-items:center;gap:10px;padding:12px}
+.open-row + .open-row{border-top:1px solid var(--line)}
+.open-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#26c6d2,#0aa0b2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px}
+.open-row .grow{flex:1}
+.open-row b{display:block;font-size:14px}
+.open-row small{color:var(--muted)}
+.scan-cta{display:flex;align-items:center;gap:6px}
+.nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:min(100%,430px);height:72px;background:rgba(255,255,255,.97);border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(4,1fr);z-index:30;backdrop-filter:blur(14px);
+}
+.nav button{
+  border:0;background:transparent;color:#80899a;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;font-size:11px
+}
+.nav button.active{color:var(--blue);font-weight:700}
+.nav .ni{font-size:21px;line-height:1}
+.tabs{display:flex;gap:8px;overflow:auto;padding-bottom:4px}
+.tab{
+  border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 18px;color:#465066;white-space:nowrap
+}
+.tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.filterbar{display:flex;gap:10px;margin:12px 0}
+.filter{
+  flex:1;padding:12px;border:1px solid var(--line);background:#fff;border-radius:14px;color:#566176;text-align:left
+}
+.space-feature{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0
+}
+.feature{
+  padding:16px;border-radius:18px;border:1px solid var(--line);min-height:126px;background:linear-gradient(135deg,#edf5ff,#fff)
+}
+.feature.study{background:linear-gradient(135deg,#e9fcfb,#fff)}
+.feature h3{margin:0 0 8px;font-size:18px;color:var(--blue)}
+.feature.study h3{color:#0da7a7}
+.feature p{font-size:12px;color:var(--muted);margin:0 0 14px;line-height:1.6}
+.space-card{
+  display:flex;gap:12px;padding:12px;border-bottom:1px solid var(--line)
+}
+.space-card:last-child{border-bottom:0}
+.space-pic{
+  width:108px;height:86px;border-radius:14px;background:linear-gradient(145deg,#d7e0eb,#f8fbff);display:flex;align-items:center;justify-content:center;
+  color:#63758d;font-size:32px
+}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.tag{padding:4px 8px;border-radius:8px;background:var(--blue-weak);color:var(--blue);font-size:11px}
+.status-good{color:var(--green)}
+.detail-hero{padding:14px;display:flex;gap:14px;align-items:center}
+.detail-pic{
+  width:135px;height:105px;border-radius:16px;background:linear-gradient(145deg,#cdd8e4,#f8fbff);display:flex;align-items:center;justify-content:center;
+  color:#51647b;font-size:38px
+}
+.detail-hero h2{margin:0 0 8px;font-size:20px}
+.info-list{padding:4px 14px}
+.info-row{display:flex;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid var(--line)}
+.info-row:last-child{border-bottom:0}
+.info-row .label{color:#4f596c}
+.info-row .value{margin-left:auto;font-weight:600;text-align:right}
+.date-strip{display:flex;gap:8px;overflow:auto;padding:12px}
+.date-tile{
+  min-width:74px;text-align:center;padding:10px 8px;border:1px solid var(--line);border-radius:12px;background:#fff
+}
+.date-tile.active{border-color:var(--blue);background:var(--blue-weak);color:var(--blue)}
+.time-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:12px}
+.time-slot{
+  padding:14px 8px;border:1px solid #cfd8e7;border-radius:12px;background:#fff;color:#415069
+}
+.time-slot.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.time-slot.disabled{background:#f1f3f6;color:#a2a9b5}
+.actionbar{
+  position:sticky;bottom:72px;z-index:15;padding:10px 16px;background:rgba(245,248,252,.96);border-top:1px solid var(--line);
+  display:flex;gap:10px;backdrop-filter:blur(10px)
+}
+.actionbar .primary{flex:1;padding:14px}
+.rulebtn{border:0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.time-choice{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:12px
+}
+.time-choice button{
+  padding:13px 8px;border:1px solid #cfd8e7;border-radius:12px;background:#fff;color:#42506a;font-size:13px
+}
+.time-choice button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.seat-simple{padding:12px}
+.seat-legend{display:flex;gap:14px;justify-content:center;font-size:12px;color:#667085;margin:4px 0 12px}
+.dotbox{width:18px;height:18px;border-radius:5px;display:inline-block;vertical-align:middle;margin-right:4px;border:1px solid #cfd8e7;background:#fff}
+.dotbox.busy{background:#d7dbe3}
+.dotbox.selected{background:var(--blue);border-color:var(--blue)}
+.study-seats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px
+}
+.study-seat{
+  padding:14px 0;border-radius:12px;border:1px solid #cfd8e7;background:#fff;color:#526079
+}
+.study-seat.busy{background:#d7dbe3;color:#8d96a6;border-color:#d7dbe3;cursor:not-allowed}
+.study-seat.selected{background:var(--blue);color:#fff;border-color:var(--blue)}
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+.summary .sum-box{padding:12px;border-radius:14px;background:#f8fbff;text-align:center}
+.summary b{color:var(--blue);display:block;margin-top:4px}
+.disabled-cta{opacity:.45;cursor:not-allowed!important}
+.event-banner{padding:18px;color:#fff;background:linear-gradient(135deg,#0e6cf4,#284b91);position:relative;overflow:hidden}
+.event-banner:after{content:"公益电影";position:absolute;right:-10px;bottom:-8px;font-size:46px;font-weight:900;color:rgba(255,255,255,.12)}
+.event-banner h2{margin:0 0 8px}
+.event-card{padding:12px;display:flex;gap:12px;align-items:center}
+.poster{
+  width:92px;height:118px;border-radius:14px;background:linear-gradient(160deg,#071d3a,#0f4779 55%,#f5a74b);
+  color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;padding:8px;flex:0 0 auto
+}
+.chips{display:flex;gap:8px;overflow:auto;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:#fff;color:#5c6678;border-radius:999px;padding:8px 14px;white-space:nowrap}
+.chip.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.screen{
+  margin:12px 28px 18px;height:34px;border-radius:50% 50% 12px 12px;background:linear-gradient(#d9e7fb,#f4f8ff);
+  display:flex;align-items:center;justify-content:center;color:#4d5f77;font-weight:700;border-top:3px solid #c9dcfa
+}
+.cinema-legend{display:flex;justify-content:center;gap:14px;font-size:11px;color:#667085;margin-bottom:14px}
+.cinema-grid{
+  display:grid;grid-template-columns:34px repeat(5,1fr);gap:10px;align-items:center;padding:0 12px 14px
+}
+.row-label{text-align:center;color:#667085;font-size:13px}
+.cinema-seat{
+  aspect-ratio:1/1;border-radius:12px 12px 8px 8px;border:1.5px solid #cbd5e1;background:#fff;color:#5b6679;
+  display:flex;align-items:center;justify-content:center;font-weight:700
+}
+.cinema-seat.occupied{background:var(--red);border-color:var(--red);color:#fff}
+.cinema-seat.selected{background:var(--green);border-color:var(--green);color:#fff}
+.movie-sum{padding:14px 16px;display:flex;align-items:center;gap:8px}
+.movie-sum b{color:var(--green)}
+.profile{padding:18px;display:flex;align-items:center;gap:14px}
+.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(145deg,#d8e7ff,#78aaff);position:relative}
+.avatar:after{content:"👤";position:absolute;font-size:38px;left:12px;top:9px;filter:grayscale(1) brightness(3)}
+.profile h2{margin:0 0 4px;font-size:20px}
+.profile p{margin:0;color:var(--muted);font-size:12px}
+.stats{display:grid;grid-template-columns:1fr 1fr;padding:14px 0}
+.stat{text-align:center;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat strong{font-size:23px}
+.stat span{display:block;color:var(--muted);font-size:12px}
+.menu-list{padding:4px 12px}
+.menu-item{
+  display:flex;align-items:center;gap:10px;padding:14px 4px;border-bottom:1px solid var(--line)
+}
+.menu-item:last-child{border-bottom:0}
+.menu-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff}
+.mi-blue{background:var(--blue)}.mi-purple{background:var(--purple)}.mi-orange{background:var(--orange)}.mi-cyan{background:var(--cyan)}
+.menu-item .arrow{margin-left:auto;color:#a5adba}
+.res-card{padding:14px;display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.res-image{width:96px;height:92px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(145deg,#d7e0eb,#fbfdff);flex:0 0 auto}
+.res-image.movie{background:linear-gradient(160deg,#071d3a,#0f4779 55%,#f5a74b);color:#fff;font-size:16px;text-align:center;padding:8px}
+.res-info{min-width:0;flex:1}
+.res-info h3{margin:0 0 7px;font-size:16px}
+.res-status{font-size:11px;padding:5px 8px;border-radius:8px;background:var(--blue-weak);color:var(--blue);display:inline-block;margin-top:5px}
+.scan-panel{padding:16px}
+.scan-panel h3{margin:0 0 12px}
+.scan-flex{display:flex;gap:12px;align-items:center}
+.scan-big{
+  width:78px;height:78px;border-radius:22px;background:var(--blue-weak);display:flex;align-items:center;justify-content:center;
+  color:var(--blue);font-size:32px
+}
+.scan-panel .primary{margin-left:auto}
+.qr{
+  width:130px;height:130px;border-radius:10px;background:
+    linear-gradient(90deg,#000 10px,transparent 10px) 0 0/24px 24px,
+    linear-gradient(#000 10px,transparent 10px) 0 0/24px 24px,
+    linear-gradient(90deg,transparent 12px,#000 12px 18px,transparent 18px) 4px 4px/28px 28px,
+    #fff;
+  border:10px solid #fff;box-shadow:0 0 0 1px var(--line);
+}
+.ticket-flex{display:flex;gap:16px;align-items:center;padding:14px}
+.seat-highlight{
+  font-size:26px;font-weight:800;color:var(--blue);padding:4px 0
+}
+.mini-seat-map{display:grid;grid-template-columns:repeat(5,16px);gap:5px}
+.mini-seat{width:16px;height:16px;border-radius:4px;background:#edf3fa;border:1px solid #d9e2ef}
+.mini-seat.sel{background:var(--blue);border-color:var(--blue)}
+.modal{
+  position:fixed;inset:0;background:rgba(11,22,38,.45);z-index:100;display:none;align-items:flex-end;justify-content:center
+}
+.modal.show{display:flex}
+.sheet{
+  width:min(100%,430px);background:#fff;border-radius:24px 24px 0 0;padding:20px 18px 28px;box-shadow:0 -16px 40px rgba(10,31,62,.2)
+}
+.sheet h2{margin:4px 0 8px;text-align:center}
+.sheet p{color:var(--muted);font-size:13px;text-align:center;margin:0 0 16px}
+.scanner{
+  height:260px;border-radius:20px;background:linear-gradient(145deg,#111827,#273954);position:relative;overflow:hidden
+}
+.scanner:before{
+  content:"";position:absolute;inset:44px;border:3px solid rgba(255,255,255,.8);border-radius:18px
+}
+.scanner:after{
+  content:"";position:absolute;left:44px;right:44px;top:50%;height:2px;background:#36e07e;box-shadow:0 0 15px #36e07e
+}
+.sheet-actions{display:flex;gap:10px;margin-top:14px}
+.sheet-actions button{flex:1;padding:12px}
+.toast{
+  position:fixed;left:50%;top:88px;transform:translateX(-50%) translateY(-10px);background:#152238;color:#fff;padding:10px 14px;border-radius:12px;
+  z-index:120;opacity:0;pointer-events:none;transition:.25s;font-size:13px
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.note{font-size:12px;color:var(--muted);line-height:1.6}
+@media (max-width:380px){
+  .quick-grid{gap:2px}.quick-item b{font-size:12px}.feature{padding:13px}.cinema-grid{gap:8px}.thumb{width:88px}
+}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- HOME -->
+  <section class="page active" id="home">
+    <div class="topbar">
+      <div class="title">南码头文化中心</div>
+      <div class="top-actions">
+        <button class="scan-mini" aria-label="扫描二维码" onclick="openScanner('通用扫码')"><span class="b1"></span><span class="b2"></span></button>
+        <button class="iconbtn">•••</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card hero">
+        <h1>南码头文化中心</h1>
+        <p>文化服务 · 空间预约 · 活动预订</p>
+      </div>
+      <div class="card notice">
+        <span class="speaker">🔊</span>
+        <span>公告：本周六报告厅公益电影开放预约</span>
+        <span class="arrow">›</span>
+      </div>
+
+      <div class="card quick-grid">
+        <button class="quick-item" onclick="showPage('space')">
+          <span class="qicon blue">✓</span><b>会议室预约</b><small>会议室在线预约</small>
+        </button>
+        <button class="quick-item" onclick="showPage('study')">
+          <span class="qicon cyan">座</span><b>自习室预约</b><small>座位+时段</small>
+        </button>
+        <button class="quick-item" onclick="showPage('events')">
+          <span class="qicon orange">★</span><b>活动预订</b><small>文化活动预订</small>
+        </button>
+        <button class="quick-item" onclick="openScanner('公共电脑室扫码上机')">
+          <span class="qicon purple">▣</span><b>公共电脑室</b><small>扫码上机使用</small>
+        </button>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>近期活动</h3><span class="more">更多 ›</span></div>
+        <div class="card list-card">
+          <div class="row-card">
+            <div class="thumb movie">寻梦之旅<br><small>JOURNEY OF DREAMS</small></div>
+            <div class="row-main">
+              <b>周末公益电影《寻梦之旅》</b>
+              <div class="meta">2025-05-24（周六）14:00–16:00</div>
+              <div class="meta">南码头文化中心 · 报告厅</div>
+            </div>
+            <button class="primary" onclick="showPage('movieSeat')">预订</button>
+          </div>
+          <div class="row-card">
+            <div class="thumb craft">非遗<br>花灯制作</div>
+            <div class="row-main">
+              <b>非遗体验：传统花灯制作</b>
+              <div class="meta">2025-05-25（周日）10:00–12:00</div>
+              <div class="meta">南码头文化中心 · 多功能室</div>
+            </div>
+            <button class="primary" onclick="toast('该活动原型暂未展开')">预订</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>热门空间</h3><span class="more">更多 ›</span></div>
+        <div class="space-feature">
+          <div class="card feature" onclick="showPage('meetingBook')" role="button">
+            <h3>会议室</h3><p>适合团队会议、培训和讲座</p><button class="secondary">查看时段</button>
+          </div>
+          <div class="card feature study" onclick="showPage('study')" role="button">
+            <h3>自习室</h3><p>安静舒适，预约座位与时段</p><button class="secondary">查看座位</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>开放服务</h3></div>
+        <div class="card">
+          <div class="open-row">
+            <div class="open-icon">▣</div>
+            <div class="grow"><b>公共电脑室 · 扫码上机</b><small>今日开放 09:00–18:00</small></div>
+            <button class="primary scan-cta" onclick="openScanner('公共电脑室扫码上机')">⌗ 扫码</button>
+          </div>
+          <div class="open-row" onclick="showPage('reservations')" role="button">
+            <div class="open-icon" style="background:var(--blue)">✓</div>
+            <div class="grow"><b>我的预约</b><small>查看空间与活动预约</small></div>
+            <span>›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <!-- SPACE -->
+  <section class="page" id="space">
+    <div class="topbar">
+      <div class="title">空间预约</div>
+      <div class="top-actions"><button class="iconbtn">•••</button></div>
+    </div>
+    <div class="content">
+      <div class="tabs">
+        <button class="tab active">全部</button><button class="tab">会议室</button><button class="tab">自习室</button>
+      </div>
+      <div class="filterbar">
+        <button class="filter">📅 今天</button><button class="filter">⚙ 按人数 / 状态筛选</button>
+      </div>
+      <div class="space-feature">
+        <div class="feature" onclick="showPage('meetingBook')">
+          <h3>会议室预约</h3><p>团队会议、培训、讲座等场景</p><button class="secondary">去查看 ›</button>
+        </div>
+        <div class="feature study" onclick="showPage('study')">
+          <h3>自习室预约</h3><p>选择时间段，再选择座位</p><button class="secondary">去查看 ›</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>可预约空间</h3></div>
+        <div class="card">
+          <div class="space-card">
+            <div class="space-pic">🏢</div>
+            <div class="row-main">
+              <b>南码头会议室A</b>
+              <div class="meta">8–12人</div>
+              <div class="tags"><span class="tag">投影</span><span class="tag">白板</span></div>
+              <button class="primary" onclick="showPage('meetingBook')">查看时段</button>
+            </div>
+          </div>
+          <div class="space-card">
+            <div class="space-pic">🏛</div>
+            <div class="row-main">
+              <b>南码头会议室B</b>
+              <div class="meta">20–30人</div>
+              <div class="tags"><span class="tag">设备齐全</span></div>
+              <button class="primary" onclick="toast('会议室B仅作为列表展示')">查看时段</button>
+            </div>
+          </div>
+          <div class="space-card">
+            <div class="space-pic">📚</div>
+            <div class="row-main">
+              <b>共享自习室</b>
+              <div class="meta status-good">当前座位充足</div>
+              <div class="meta">开放时间 09:00–16:15</div>
+              <button class="primary" onclick="showPage('study')">查看座位</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <!-- MEETING BOOK -->
+  <section class="page" id="meetingBook">
+    <div class="topbar">
+      <button class="back" onclick="showPage('space')">‹</button><div class="title">会议室详情</div>
+      <div class="top-actions"><button class="iconbtn">•••</button></div>
+    </div>
+    <div class="content">
+      <div class="card detail-hero">
+        <div class="detail-pic">🏢</div>
+        <div><h2>南码头会议室A</h2><div class="meta">可容纳 8–12 人</div><div class="tags"><span class="tag">投影</span><span class="tag">白板</span><span class="tag">视频会议</span></div></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="date-strip">
+          <button class="date-tile active">08/28<br><small>周五</small></button>
+          <button class="date-tile">08/29<br><small>周六</small></button>
+          <button class="date-tile">08/30<br><small>周日</small></button>
+          <button class="date-tile">08/31<br><small>周一</small></button>
+        </div>
+      </div>
+      <div class="section">
+        <div class="sec-head"><h3>可预约时段</h3></div>
+        <div class="card time-grid" id="meetingTimes">
+          <button class="time-slot">09:00–10:00</button>
+          <button class="time-slot">10:00–11:00</button>
+          <button class="time-slot disabled" disabled>11:00–12:00</button>
+          <button class="time-slot">13:00–14:00</button>
+          <button class="time-slot active">14:00–16:00</button>
+          <button class="time-slot disabled" disabled>16:00–17:00</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="info-row" style="padding:14px"><span>预计人数</span><div class="value">− &nbsp; <b>10</b> &nbsp; ＋</div></div>
+      </div>
+    </div>
+    <div class="actionbar">
+      <button class="rulebtn" onclick="toast('预约规则：按后台配置执行')">预约规则</button>
+      <button class="primary" onclick="toast('会议室A预约已确认');showPage('meetingReservation')">立即预约</button>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <!-- STUDY -->
+  <section class="page" id="study">
+    <div class="topbar">
+      <button class="back" onclick="showPage('space')">‹</button><div class="title">自习室预约</div>
+      <div class="top-actions"><button class="iconbtn">•••</button></div>
+    </div>
+    <div class="content">
+      <div class="card detail-hero">
+        <div class="detail-pic" style="width:105px;height:84px;font-size:28px">📚</div>
+        <div><h2>共享自习室</h2><div class="meta">2026-08-28（周五）</div><div class="meta status-good">可预约</div></div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>1. 选择时间段</h3></div>
+        <div class="card time-choice" id="studyTimes">
+          <button data-time="9:00-10:15">9:00-10:15</button>
+          <button data-time="10:30-11:45">10:30-11:45</button>
+          <button data-time="13:30-14:45">13:30-14:45</button>
+          <button data-time="15:00-16:15">15:00-16:15</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>2. 选择座位</h3></div>
+        <div class="card seat-simple">
+          <div class="seat-legend">
+            <span><i class="dotbox"></i>可选</span>
+            <span><i class="dotbox busy"></i>已预约</span>
+            <span><i class="dotbox selected"></i>已选择</span>
+          </div>
+          <div class="study-seats" id="studySeats"></div>
+        </div>
+      </div>
+
+      <div class="card summary">
+        <div class="sum-box">已选座位<b id="studySeatSummary">未选择</b></div>
+        <div class="sum-box">已选时间段<b id="studyTimeSummary">未选择</b></div>
+      </div>
+      <p class="note" style="text-align:center">请在预约开始后 15 分钟内签到，超时未签到将自动释放座位。</p>
+    </div>
+    <div class="actionbar">
+      <button class="primary disabled-cta" id="studyConfirm" disabled onclick="confirmStudy()">确认预约</button>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <!-- EVENTS -->
+  <section class="page" id="events">
+    <div class="topbar">
+      <div class="title">活动预订</div>
+      <div class="top-actions"><button class="iconbtn">•••</button></div>
+    </div>
+    <div class="content">
+      <div class="chips"><button class="chip active">全部</button><button class="chip">讲座</button><button class="chip">展演</button><button class="chip">电影</button><button class="chip">亲子</button></div>
+      <div class="card event-banner">
+        <h2>周末公益电影《寻梦之旅》</h2>
+        <div>2025-05-24（周六）14:00–16:00</div>
+        <div style="margin-top:6px">南码头文化中心 · 报告厅</div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>近期可预订活动</h3></div>
+        <div class="card">
+          <div class="event-card">
+            <div class="poster">寻梦之旅</div>
+            <div class="row-main">
+              <b>周末公益电影《寻梦之旅》</b>
+              <div class="meta">报告厅 · 公益电影</div>
+              <div class="meta">剩余座位：23 / 25</div>
+              <button class="primary" style="margin-top:8px" onclick="showPage('movieSeat')">选座预订</button>
+            </div>
+          </div>
+          <div class="event-card" style="border-top:1px solid var(--line)">
+            <div class="poster" style="background:linear-gradient(145deg,#f8ecd8,#c99d68);color:#6f4b2d">花灯制作</div>
+            <div class="row-main">
+              <b>非遗体验：传统花灯制作</b>
+              <div class="meta">多功能室 · 10:00–12:00</div>
+              <button class="secondary" style="margin-top:8px" onclick="toast('该活动原型暂未展开')">立即预订</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <!-- MOVIE SEAT -->
+  <section class="page" id="movieSeat">
+    <div class="topbar">
+      <button class="back" onclick="showPage('events')">‹</button><div class="title">周末公益电影选座</div>
+      <div class="top-actions"><button class="iconbtn">•••</button></div>
+    </div>
+    <div class="content">
+      <div class="card event-card">
+        <div class="poster">寻梦之旅</div>
+        <div class="row-main">
+          <b>周末公益电影《寻梦之旅》</b>
+          <div class="meta">2025-05-24（周六）14:00–16:00</div>
+          <div class="meta">南码头文化中心 · 报告厅</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;padding:12px 0">
+        <div class="screen">银 幕</div>
+        <div class="cinema-legend">
+          <span><i class="dotbox"></i>可选</span>
+          <span><i class="dotbox" style="background:var(--green);border-color:var(--green)"></i>已选</span>
+          <span><i class="dotbox" style="background:var(--red);border-color:var(--red)"></i>已被他人选中</span>
+        </div>
+        <div class="cinema-grid" id="cinemaGrid"></div>
+      </div>
+
+      <div class="card movie-sum" style="margin-top:12px">
+        <span>✓</span><span>已选座位：</span><b id="movieSeatSummary">第三排第2座</b>
+        <button class="secondary" style="margin-left:auto" onclick="clearMovieSeat()">清空</button>
+      </div>
+    </div>
+    <div class="actionbar">
+      <button class="greenbtn" id="movieConfirm" style="flex:1;padding:14px" onclick="confirmMovieSeat()">确认选座</button>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <!-- PROFILE -->
+  <section class="page" id="profile">
+    <div class="topbar">
+      <div class="title">个人中心</div>
+      <div class="top-actions"><button class="iconbtn">•••</button></div>
+    </div>
+    <div class="content">
+      <div class="card profile">
+        <div class="avatar"></div>
+        <div><h2>张先生</h2><p>欢迎来到南码头文化中心</p></div><span style="margin-left:auto;color:#a0a9b8">›</span>
+      </div>
+
+      <div class="card stats" style="margin-top:12px">
+        <div class="stat" onclick="showPage('reservations')"><strong>2</strong><span>我的预约</span></div>
+        <div class="stat"><strong>1</strong><span>待签到</span></div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>我的服务</h3></div>
+        <div class="card menu-list">
+          <div class="menu-item" onclick="showPage('reservations')"><span class="menu-icon mi-blue">✓</span><span>我的预约</span><span class="arrow">›</span></div>
+          <div class="menu-item"><span class="menu-icon mi-purple">▤</span><span>预约记录</span><span class="arrow">›</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>信用与通知</h3></div>
+        <div class="card menu-list">
+          <div class="menu-item"><span class="menu-icon mi-orange">!</span><span>违约记录</span><span class="arrow">›</span></div>
+          <div class="menu-item"><span class="menu-icon mi-blue">🔔</span><span>消息通知</span><span class="arrow">›</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>帮助与设置</h3></div>
+        <div class="card menu-list">
+          <div class="menu-item"><span class="menu-icon mi-blue">文</span><span>预约规则</span><span class="arrow">›</span></div>
+          <div class="menu-item"><span class="menu-icon mi-cyan">?</span><span>常见问题</span><span class="arrow">›</span></div>
+          <div class="menu-item"><span class="menu-icon mi-purple">☎</span><span>联系我们</span><span class="arrow">›</span></div>
+        </div>
+      </div>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <!-- RESERVATIONS -->
+  <section class="page" id="reservations">
+    <div class="topbar">
+      <button class="back" onclick="showPage('profile')">‹</button><div class="title">我的预约</div>
+      <div class="top-actions"><button class="iconbtn">•••</button></div>
+    </div>
+    <div class="content">
+      <div class="tabs" style="justify-content:space-between">
+        <button class="tab active">全部</button><button class="tab">空间预约</button><button class="tab">活动预订</button>
+      </div>
+      <div style="margin-top:14px">
+        <div class="card res-card" onclick="showPage('meetingReservation')">
+          <div class="res-image">🏢</div>
+          <div class="res-info">
+            <h3>南码头会议室A</h3>
+            <div class="meta">📅 2026-08-28（周五）</div>
+            <div class="meta">🕒 14:00–16:00</div>
+            <div class="meta">📍 南码头文化中心</div>
+            <span class="res-status">待使用</span>
+          </div><span>›</span>
+        </div>
+
+        <div class="card res-card" onclick="showPage('movieReservation')">
+          <div class="res-image movie">寻梦之旅</div>
+          <div class="res-info">
+            <h3>周末公益电影《寻梦之旅》</h3>
+            <div class="meta">📅 2025-05-24（周六）</div>
+            <div class="meta">🕒 14:00–16:00</div>
+            <div class="meta">📍 南码头文化中心 · 报告厅</div>
+            <span class="res-status" style="background:#eafaf8;color:#0a9f92">待签到</span>
+          </div><span>›</span>
+        </div>
+      </div>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <!-- MEETING RESERVATION DETAIL -->
+  <section class="page" id="meetingReservation">
+    <div class="topbar">
+      <button class="back" onclick="showPage('reservations')">‹</button><div class="title">会议室预约详情</div>
+      <div class="top-actions"><button class="iconbtn">•••</button></div>
+    </div>
+    <div class="content">
+      <div class="card detail-hero">
+        <div class="detail-pic">🏢</div>
+        <div><h2>南码头会议室A</h2><div class="meta">南码头文化中心</div><div class="tags"><span class="tag">8–12人</span><span class="tag">投影</span><span class="tag">白板</span></div></div>
+      </div>
+      <div class="section">
+        <div class="sec-head"><h3>预约信息</h3></div>
+        <div class="card info-list">
+          <div class="info-row"><span class="label">预约日期</span><span class="value">2026-08-28（周五）</span></div>
+          <div class="info-row"><span class="label">预约时间</span><span class="value">14:00–16:00</span></div>
+          <div class="info-row"><span class="label">预计人数</span><span class="value">10 人</span></div>
+          <div class="info-row"><span class="label">预约用途</span><span class="value">培训讨论</span></div>
+          <div class="info-row"><span class="label">预约状态</span><span class="value status-good">已确认</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>开门与签到</h3></div>
+        <div class="card scan-panel">
+          <div class="scan-flex">
+            <div class="scan-big">⌗</div>
+            <div><b>扫码开门以及签到</b><p class="note" style="margin:4px 0 0">到达会议室后，扫描门口二维码完成开门并签到。</p></div>
+            <button class="primary" onclick="openScanner('扫码开门以及签到')">扫码</button>
+          </div>
+          <p class="note" style="margin:12px 0 0">请在预约时间内使用，超时将无法开门。</p>
+        </div>
+      </div>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+  <!-- MOVIE RESERVATION DETAIL -->
+  <section class="page" id="movieReservation">
+    <div class="topbar">
+      <button class="back" onclick="showPage('reservations')">‹</button><div class="title">周末公益电影预约详情</div>
+      <div class="top-actions"><button class="iconbtn">•••</button></div>
+    </div>
+    <div class="content">
+      <div class="card event-card">
+        <div class="poster">寻梦之旅</div>
+        <div class="row-main">
+          <b>周末公益电影《寻梦之旅》</b>
+          <div class="meta">2025-05-24（周六）14:00–16:00</div>
+          <div class="meta">南码头文化中心 · 报告厅</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>座位信息</h3></div>
+        <div class="card ticket-flex">
+          <div style="flex:1">
+            <div>已选座位</div>
+            <div class="seat-highlight" id="movieDetailSeat">第三排第2座</div>
+            <div class="note">请对号入座，座位不支持更改。</div>
+          </div>
+          <div>
+            <div class="screen" style="margin:0 0 8px;height:20px;font-size:10px">银幕</div>
+            <div class="mini-seat-map" id="miniMovieMap"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-head"><h3>入场凭证</h3></div>
+        <div class="card ticket-flex">
+          <div class="qr"></div>
+          <div>
+            <b>入场二维码</b>
+            <div class="meta">请在检票处出示</div>
+            <div style="margin-top:12px">预约码：<b style="color:var(--blue);font-size:24px">684219</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="nav"></nav>
+  </section>
+
+</div>
+
+<div class="modal" id="scannerModal">
+  <div class="sheet">
+    <h2 id="scannerTitle">扫码</h2>
+    <p>模拟扫码界面：将二维码置于框内</p>
+    <div class="scanner"></div>
+    <div class="sheet-actions">
+      <button class="secondary" onclick="closeScanner()">取消</button>
+      <button class="primary" onclick="simulateScanSuccess()">模拟扫码成功</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const primaryPages = ['home','space','events','profile'];
+let lastPrimary = 'home';
+let studyTime = '';
+let studySeat = '';
+let movieSeat = '3-2';
+
+const navItems = [
+  ['home','⌂','首页'],
+  ['space','▣','空间预约'],
+  ['events','★','活动预订'],
+  ['profile','●','个人中心']
+];
+
+function renderNav(){
+  document.querySelectorAll('.nav').forEach(nav=>{
+    nav.innerHTML = navItems.map(([id,icon,label])=>`
+      <button data-nav="${id}" onclick="showPage('${id}')">
+        <span class="ni">${icon}</span><span>${label}</span>
+      </button>`).join('');
+  });
+  updateNav();
+}
+function updateNav(){
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active', b.dataset.nav===lastPrimary));
+}
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target=document.getElementById(id);
+  if(!target) return;
+  target.classList.add('active');
+  if(primaryPages.includes(id)) lastPrimary=id;
+  else if(['meetingBook','study','meetingReservation'].includes(id)) lastPrimary='space';
+  else if(['movieSeat','movieReservation'].includes(id)) lastPrimary='events';
+  else if(['reservations'].includes(id)) lastPrimary='profile';
+  updateNav();
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+function openScanner(title){
+  document.getElementById('scannerTitle').textContent=title||'扫码';
+  document.getElementById('scannerModal').classList.add('show');
+}
+function closeScanner(){document.getElementById('scannerModal').classList.remove('show')}
+function simulateScanSuccess(){closeScanner();toast('扫码成功（原型演示）')}
+
+// Study room 16 seats
+const busyStudy = new Set(['A03','B02','C04','D01']);
+function buildStudySeats(){
+  const wrap=document.getElementById('studySeats');
+  const labels=[];
+  ['A','B','C','D'].forEach(r=>{
+    for(let c=1;c<=4;c++) labels.push(`${r}${String(c).padStart(2,'0')}`);
+  });
+  wrap.innerHTML=labels.map(s=>`<button class="study-seat ${busyStudy.has(s)?'busy':''}" ${busyStudy.has(s)?'disabled':''} data-seat="${s}" onclick="selectStudySeat('${s}')">${s}</button>`).join('');
+}
+function selectStudySeat(s){
+  studySeat=s;
+  document.querySelectorAll('.study-seat').forEach(el=>el.classList.toggle('selected',el.dataset.seat===s));
+  document.getElementById('studySeatSummary').textContent=s;
+  updateStudyConfirm();
+}
+document.querySelectorAll('#studyTimes button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    studyTime=btn.dataset.time;
+    document.querySelectorAll('#studyTimes button').forEach(x=>x.classList.toggle('active',x===btn));
+    document.getElementById('studyTimeSummary').textContent=studyTime;
+    updateStudyConfirm();
+  });
+});
+function updateStudyConfirm(){
+  const b=document.getElementById('studyConfirm');
+  const ok=!!studyTime && !!studySeat;
+  b.disabled=!ok;b.classList.toggle('disabled-cta',!ok);
+}
+function confirmStudy(){
+  toast(`已预约 ${studySeat} · ${studyTime}`);
+}
+
+// Meeting times
+document.querySelectorAll('#meetingTimes .time-slot:not(.disabled)').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#meetingTimes .time-slot').forEach(x=>x.classList.remove('active'));
+    btn.classList.add('active');
+  })
+});
+
+// Cinema seat map 5x5; row 2 seats 3 & 4 occupied
+function buildCinema(){
+  const g=document.getElementById('cinemaGrid'); let h='';
+  for(let r=1;r<=5;r++){
+    h+=`<div class="row-label">${r}排</div>`;
+    for(let c=1;c<=5;c++){
+      const key=`${r}-${c}`;
+      const occupied=(r===2 && (c===3||c===4));
+      const selected=(movieSeat===key);
+      h+=`<button class="cinema-seat ${occupied?'occupied':''} ${selected?'selected':''}" ${occupied?'disabled':''} onclick="selectMovieSeat(${r},${c})">${c}</button>`;
+    }
+  }
+  g.innerHTML=h;
+  syncMovieSeatSummary();
+}
+function selectMovieSeat(r,c){
+  movieSeat=`${r}-${c}`;
+  buildCinema();
+}
+function clearMovieSeat(){
+  movieSeat='';
+  buildCinema();
+}
+function cnRow(n){return ['','第一排','第二排','第三排','第四排','第五排'][n]}
+function syncMovieSeatSummary(){
+  const summary=document.getElementById('movieSeatSummary');
+  const confirm=document.getElementById('movieConfirm');
+  if(!movieSeat){
+    summary.textContent='未选择';
+    confirm.disabled=true;confirm.classList.add('disabled-cta');
+    return;
+  }
+  const [r,c]=movieSeat.split('-').map(Number);
+  summary.textContent=`${cnRow(r)}第${c}座`;
+  confirm.disabled=false;confirm.classList.remove('disabled-cta');
+}
+function confirmMovieSeat(){
+  if(!movieSeat) return;
+  const [r,c]=movieSeat.split('-').map(Number);
+  document.getElementById('movieDetailSeat').textContent=`${cnRow(r)}第${c}座`;
+  buildMiniMovieMap();
+  toast('选座成功');
+  setTimeout(()=>showPage('movieReservation'),450);
+}
+function buildMiniMovieMap(){
+  const m=document.getElementById('miniMovieMap');
+  let h='';
+  for(let r=1;r<=5;r++) for(let c=1;c<=5;c++){
+    h+=`<span class="mini-seat ${movieSeat===`${r}-${c}`?'sel':''}"></span>`;
+  }
+  m.innerHTML=h;
+}
+
+renderNav();
+buildStudySeats();
+buildCinema();
+buildMiniMovieMap();
+</script>
+</body>
+</html>
